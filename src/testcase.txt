@@ -1,0 +1,1502 @@
+------------------------------------------------------------------------------------------------------------------------------------------------
+ARQUIVOS A SEREM ANALISADOS
+------------------------------------------------------------------------------------------------------------------------------------------------
+Examina todos os casos de separação de normas. E aplica os algoritmos para os casos possíveis
+
+1	{OBL,casa, pessoa, vestir(camisa,branca),ac, dc, none}
+2	{OBL,casa, pessoa, vestir(camisa,azul),ac, dc, none}
+3	{PER,casa, pessoa, vestir(calça,preta),ac, dc, none}
+4	{PER,casa, pessoa, estudar(portugues,21/10/2014,3hs),ac, dc, none}
+5	{PRO,casa, cachorro, vestir(calça,{vermelha, azul, laranja, lilás}),ac, dc, none}
+6	{OBL,casa, pessoa, vestir(CONJUNTO_VESTIMENTA,A),ac, dc, none} 
+7	{OBL,empresa, secretaria, vestir(camisa,branca),ac, dc, none}
+8	{OBL,empresa, secretaria, vestir(camisa,vermelha),ac, dc, none}
+9	{PRO,faculdade, professor, vestir(camisa,branca),ac, dc, none}
+10	{OBL,faculdade, professor, vestir(camisa,branca),ac, dc, none}
+11	{OBL,campo, jogador, vestir(chuteira,pé),ac, dc, none}
+12	{PER,campo, jogador, chuta(bola,branco),ac, dc, none}
+13	{OBL,campo, juiz, usar(apito,boca),ac, dc, none}
+14	{PER,campo, juiz, usar(cartao,amarelo),ac, dc, none}
+
+RESULTADO DA SEPARAÇÃO DAS NORMAS USANDO O ALGORITMO insereEClassificaTOdasAsNormas:
+1,2,3,6
+4
+5
+7,8
+9,10
+11
+12
+13,14
+UTILIZANDO APENAS AS NORMAS 1,2,3,6 OS CONFLITOS GERADOS SÃO:
+1,2; 	1,2,3;	 1,3,6; 	2,3,6; 	1,2,3,6 	ESTÃO EM CONFLITO
+======================>CHECKED
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+--SEM CONFLITO
+PERMITIDO vestir(camisa,branca,passada,lisa)
+PERMITIDO vestir(camisa,branca,passada,lisa)
+======================>CHECKED
+
+
+--CONFLITO
+OBRIGADO vestir(camisa,branca,passada,lisa) 	PERMITIDO {passada}
+OBRIGADO vestir(camisa,branca,amarrotada,lisa)  PERMITIDO {amarrotada} Interseção é vazia
+======================>CHECKED
+
+--CONFLITO
+OBRIGADO vestir(camisa,branca,passada,lisa) 	PERMITIDO {branca}
+OBRIGADO vestir(camisa,preta,amarrotada,lisa)	PERMITIDO {preta} Interseção é vazia
+======================>CHECKED
+
+--CONFLITO
+OBRIGADO vestir(camisa,branca,passada,lisa) 	PERMITIDO {branca}
+OBRIGADO vestir(camisa,preta,amarrotada,lisa)	PERMITIDO {preta} 
+OBRIGADO vestir(camisa,preta,amarrotada,lisa)	PERMITIDO {preta} Interseção é vazia
+======================>CHECKED
+
+--SEM CONFLITO (COM DUAS NORMAS NÃO FAZ SENTIDO UM ELEMENTO VARIÁVEL)
+OBRIGADO vestir(camisa,A,passada,lisa)
+OBRIGADO vestir(calça,A,amarrotada,lisa)
+======================>CHECKED
+
+--SEM CONFLITO
+PERMITIDO vestir(camisa,branca,passada,lisa)	PERMITIDO {branca}
+OBRIGADO vestir(camisa,branca,passada,lisa)		PERMITIDO {branca} Interseção com elementos...não tem conflito
+======================>CHECKED
+
+--CONFLITO
+PERMITIDO vestir(camisa,branca,passada,lisa) 	PERMITIDO {branca}
+PROIBIDO vestir(camisa,branca,passada,lisa)		PERMITIDO {preta, vermelha, azul, lilás}  Interseção é vazia
+PROIBIDO vestir(camisa,azul,passada,lisa)		PERMITIDO {branca, preta, vermelha, lilás}  Interseção é vazia
+======================>CHECKED
+
+--CONFLITO (neste caso a camisa branca é válida, mas os outros pattern matching falham
+PERMITIDO vestir(camisa,branca,passada,lisa) 		PERMITIDO {camisa} {branca} {passada} {lisa}
+PROIBIDO vestir(camisa,preta,passada,lisa)			PERMITIDO {camisa} {branca, vermelha, azul, lilás} {amarrotada} {horizontal,  vertical, rajada}
+PROIBIDO vestir(camisa,azul,passada,lisa)			PERMITIDO {camisa} {branca, preta, vermelha, lilás} {amarrotada} {horizontal, vertical, rajada}
+PROIBIDO vestir(camisa,vermelha,passada,listrada)	PERMITIDO {camisa} {branca, preta, azul, lilás} {amarrotada}
+======================>CHECKED
+
+--CONFLITO
+OBRIGADO vestir(camisa,branca,passada,lisa)			--{branca}
+PROIBIDO vestir(camisa,branca,passada,lisa)			--{!branca}
+======================>CHECKED
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+----CENÁRIO 1.1:
+	N1 = agente A é PERMITIDO a vestir camisa branca passada
+	N2 = agente A é PERMITIDO a vestir calça branca passada
+	N3 = agente A é PROIBIDO a vestir calça e camisa da mesma EQUAL amarrotada
+	
+	N1 = agente A é PERMITIDO a vestir camisa branca passada 
+	N2 = agente A é PERMITIDO a vestir calça branca pasada
+	N3 = agente A é PERMITIDO a vestir calça e camisa de cores diferentes passada
+
+	N1: vestir {camisa} {branca} {passada}
+	N2: vestir {calça}  {branca} {passada}
+	N3: vestir {camisa} {A}  {passada}
+	N4: vestir {calça}  {!A} {passada}
+	CONFLITO
+	======================>CHECKED
+
+----CENÁRIO 1.2
+	N1 = agente A é PERMITIDO a vestir camisa branca passada
+	N2 = agente A é PERMITIDO a vestir calça branca passada
+	N3 = agente A é PROIBIDO a vestir calça e camisa da mesma EQUAL passada
+	
+	[Id: 1 | DeonticConcept: PERMISSION | Behavior: dress | color( white ) ironingtype( ironing ) 	garment( shirt ) ,
+	Id: 2  | DeonticConcept: PERMISSION | Behavior: dress | color( white ) ironingtype( ironing ) 	garment( pant ) ,
+	Id: -1 | DeonticConcept: PERMISSION | Behavior: dress | color( A )	   ironingtype( crumpled )	garment( pant ) ,
+	Id: -1 | DeonticConcept: PERMISSION | Behavior: dress | color( !A )    ironingtype( crumpled )	garment( shirt ) ]
+	
+	CONFLITO
+	======================>CHECKED
+	
+----CENÁRIO 1.3
+N1 = agente A é PERMITIDO a vestir camisa branca passada
+N2 = agente A é PERMITIDO a vestir calça branca passada
+N3 = agente A é PROIBIDO a vestir calça e camisa da mesma DIFF amarrotada
+
+[Id: 1 | DeonticConcept: PERMISSION | Behavior: dress | color( white )	ironingtype( ironing )  garment( shirt ) ,
+Id: 2  | DeonticConcept: PERMISSION | Behavior: dress | color( white )	ironingtype( ironing )  garment( pant ) , 
+Id: -1 | DeonticConcept: PERMISSION | Behavior: dress | color( A ) 		ironingtype( ironing )  garment( pant ) , 
+Id: -1 | DeonticConcept: PERMISSION | Behavior: dress | color( A )		ironingtype( ironing )  garment( shirt ) ]
+SEM CONFLITO
+======================>CHECKED
+	
+	
+----CENÁRIO 1.4
+	N1 = agente A é PERMITIDO a vestir camisa branca passada
+	N2 = agente A é PERMITIDO a vestir calça branca passada
+	N3 = agente A é PROIBIDO a vestir calça e camisa da mesma DIFF passada
+
+	[Id: 1 | DeonticConcept: PERMISSION | Behavior: dress | color( white ) 	ironingtype( ironing ) 		garment( shirt ) ,
+	Id: 2  | DeonticConcept: PERMISSION | Behavior: dress | color( white ) 	ironingtype( ironing ) 		garment( pant ) , 
+	Id: -1 | DeonticConcept: PERMISSION | Behavior: dress | color( A ) 		ironingtype( crumpled )  	garment( pant ) , 
+	Id: -1 | DeonticConcept: PERMISSION | Behavior: dress | color( A )		ironingtype( crumpled ) ) 	garment( shirt ) ]
+	CONFLITO
+	======================>CHECKED
+
+
+----CENÁRIO 1.5:
+	N1 = agente A é OBRIGADO a vestir camisa branca passada listrada
+	N2 = agente A é PROIBIDO a vestir calça branca passada horizontal
+	N3 = agente A é PROIBIDO a vestir calça e camisa da mesma EQUAL amarrotada vertical
+	
+	[Id: 1 | DeonticConcept: PERMISSION | Behavior: dress | picture( gust ) 					ironingtype( ironing ) 	color( white ) 					garment( shirt ) ,
+	Id: -1 | DeonticConcept: PERMISSION | Behavior: dress | picture( gust vertical smooth ) 	ironingtype( crumpled ) color( red lilac blue black ) 	garment( pant ) , 
+	Id: -1 | DeonticConcept: PERMISSION | Behavior: dress | picture( gust smooth horizontal ) 	ironingtype( ironing ) 	color( A ) 						garment( pant ) ,
+	Id: -1 | DeonticConcept: PERMISSION | Behavior: dress | picture( gust smooth horizontal ) 	ironingtype( ironing ) 	color( !A ) 					garment( shirt ) ]
+	
+	CONFLITO
+	======================>CHECKED
+	
+----CENÁRIO 1.6
+N1 = agente A é OBRIGADO a vestir camisa branca passada listrada
+N2 = agente A é PROIBIDO a vestir calça branca amarrotada horizontal
+N3 = agente A é PROIBIDO a vestir calça e camisa da mesma EQUAL amarrotada vertical
+
+[Id: 1 | DeonticConcept: PERMISSION | Behavior: dress | picture( gust ) 					ironingtype( ironing ) color( white ) 					garment( shirt ) , 
+Id: -1 | DeonticConcept: PERMISSION | Behavior: dress | picture( gust vertical smooth ) 	ironingtype( ironing ) color( red lilac blue black ) 	garment( pant ) , 
+Id: -1 | DeonticConcept: PERMISSION | Behavior: dress | picture( gust smooth horizontal ) 	ironingtype( ironing ) color( A ) 						garment( pant ) , 
+Id: -1 | DeonticConcept: PERMISSION | Behavior: dress | picture( gust smooth horizontal ) 	ironingtype( ironing ) color( !A ) 						garment( shirt ) ]
+
+SEM CONFLITO
+======================>CHECKED
+
+
+----CENÁRIO 1.7:
+	N1 = agente A é OBRIGADO a vestir camisa branca passada listrada
+	N2 = agente A é PROIBIDO a vestir calça branca passada horizontal
+	N3 = agente A é PROIBIDO a vestir calça e camisa da mesma DIFF amarrotada vertical
+	
+	[Id: 1 | DeonticConcept: PERMISSION | Behavior: dress | picture( gust ) 					ironingtype( ironing ) 	color( white ) 					garment( shirt ) ,
+	Id: -1 | DeonticConcept: PERMISSION | Behavior: dress | picture( gust vertical smooth ) 	ironingtype( crumpled ) color( red lilac blue black ) 	garment( pant ) , 
+	Id: -1 | DeonticConcept: PERMISSION | Behavior: dress | picture( gust smooth horizontal ) 	ironingtype( ironing ) 	color( A ) 						garment( pant ) ,
+	Id: -1 | DeonticConcept: PERMISSION | Behavior: dress | picture( gust smooth horizontal ) 	ironingtype( ironing ) 	color( A )	 					garment( shirt ) ]
+	
+	CONFLITO
+	======================>CHECKED
+	
+----CENÁRIO 1.8 (QUASE IGUAL AO ANTERIOR, MAS MUDA A COR DA CAMISA:
+	N1 = agente A é OBRIGADO a vestir camisa vermelha passada listrada
+	N2 = agente A é PROIBIDO a vestir calça branca passada horizontal
+	N3 = agente A é PROIBIDO a vestir calça e camisa da mesma DIFF amarrotada vertical
+	
+	[Id: 1 | DeonticConcept: PERMISSION | Behavior: dress | picture( gust ) 					ironingtype( ironing ) 	color( red ) 					garment( shirt ) ,
+	Id: -1 | DeonticConcept: PERMISSION | Behavior: dress | picture( gust vertical smooth ) 	ironingtype( crumpled ) color( red lilac blue black ) 	garment( pant ) , 
+	Id: -1 | DeonticConcept: PERMISSION | Behavior: dress | picture( gust smooth horizontal ) 	ironingtype( ironing ) 	color( A ) 						garment( pant ) ,
+	Id: -1 | DeonticConcept: PERMISSION | Behavior: dress | picture( gust smooth horizontal ) 	ironingtype( ironing ) 	color( A )	 					garment( shirt ) ]
+	
+	CONFLITO
+	======================>CHECKED
+	
+----CENÁRIO 1.9
+N1 = agente A é OBRIGADO a vestir camisa vermelha passada listrada
+N2 = agente A é PROIBIDO a vestir calça branca amarrotada horizontal
+N3 = agente A é PROIBIDO a vestir calça e camisa da mesma DIFF amarrotada vertical
+
+[Id: 1 | DeonticConcept: PERMISSION | Behavior: dress | picture( gust ) 					ironingtype( ironing ) color( red ) 					garment( shirt ) , 
+Id: -1 | DeonticConcept: PERMISSION | Behavior: dress | picture( gust vertical smooth ) 	ironingtype( ironing ) color( red lilac blue black ) 	garment( pant ) , 
+Id: -1 | DeonticConcept: PERMISSION | Behavior: dress | picture( gust smooth horizontal ) 	ironingtype( ironing ) color( A ) 						garment( pant ) , 
+Id: -1 | DeonticConcept: PERMISSION | Behavior: dress | picture( gust smooth horizontal ) 	ironingtype( ironing ) color( A ) 						garment( shirt ) ]
+
+SEM CONFLITO
+======================>CHECKED
+
+----CENÁRIO 1.10
+	N1 = agente A é OBRIGADO a vestir camisa vermelha passada listrada
+	N2 = agente A é PROIBIDO a vestir calça branca amarrotada horizontal
+	N3 = agente A é PROIBIDO a vestir calça e camisa da mesma DIFF passada vertical
+	
+	[Id: 1 | DeonticConcept: PERMISSION | Behavior: dress | picture( gust ) 					ironingtype( ironing ) color( red ) 				garment( shirt ) , 
+	Id: -1 | DeonticConcept: PERMISSION | Behavior: dress | picture( gust vertical smooth ) 	ironingtype( ironing ) color( red lilac blue black ) 	garment( pant ) , 
+	Id: -1 | DeonticConcept: PERMISSION | Behavior: dress | picture( gust smooth horizontal ) 	ironingtype( crumpled ) color( A ) 						garment( pant ) , 
+	Id: -1 | DeonticConcept: PERMISSION | Behavior: dress | picture( gust smooth horizontal ) 	ironingtype( crumpled ) color( A ) 						garment( shirt ) ]
+	
+	CONFLITO (o ironingtype do EQUAL é problemático)
+	======================>CHECKED
+
+
+
+----CENÁRIO 3
+PERMITIDO vestir(camisa,branca,passada,lisa)
+PERMITIDO vestir(camisa,branca,passada,lisa)
+SEM CONFLITO
+
+----CENÁRIO 4
+	OBRIGADO vestir(camisa,branca,passada,lisa) 	PERMITIDO {passada}
+	OBRIGADO vestir(camisa,branca,amarrotada,lisa)  PERMITIDO {amarrotada} Interseção é vazia
+	CONFLITO
+	
+----CENÁRIO 5
+	OBRIGADO vestir(camisa,branca,passada,lisa) 	PERMITIDO {branca}
+	OBRIGADO vestir(camisa,preta,amarrotada,lisa)	PERMITIDO {preta} Interseção é vazia
+	CONFLITO
+	
+----CENÁRIO 6
+	OBRIGADO vestir(camisa,branca,passada,lisa) 	PERMITIDO {branca}
+	OBRIGADO vestir(camisa,preta,amarrotada,lisa)	PERMITIDO {preta} 
+	OBRIGADO vestir(camisa,preta,amarrotada,lisa)	PERMITIDO {preta} Interseção é vazia
+	CONFLITO
+
+----CENÁRIO 7
+OBRIGADO vestir(camisa,A,passada,lisa)
+OBRIGADO vestir(calça,A,amarrotada,lisa)
+SEM CONFLITO (COM DUAS NORMAS NÃO FAZ SENTIDO UM ELEMENTO VARIÁVEL - SERÁ ELIMINADO ANTES)
+
+----CENÁRIO 8
+PERMITIDO vestir(camisa,branca,passada,lisa)	PERMITIDO {branca}
+OBRIGADO vestir(camisa,branca,passada,lisa)		PERMITIDO {branca} Interseção com elementos...não tem conflito
+SEM CONFLITO
+
+----CENÁRIO 9
+	PERMITIDO vestir(camisa,branca,passada,lisa) 	
+	PROIBIDO vestir(camisa,branca,passada,lisa)		
+	PROIBIDO vestir(camisa,azul,passada,lisa)		
+	*
+	PERMITIDO {branca} 							{passada}	  {lisa}
+	PERMITIDO {preta, vermelha, azul, lilás} 	{amarrotada}  {horizontal, vertical, rajada}Interseção é vazia
+	PERMITIDO {branca, preta, vermelha, lilás} 	{amarrotada}  {horizontal, vertical, rajada}Interseção é vazia
+	CONFLITO (existe conflito na cor, na passada e na estampa)
+
+----CENÁRIO 10
+	PERMITIDO vestir(camisa,branca,passada,lisa) 		
+	PROIBIDO vestir(camisa,preta,passada,lisa)			
+	PROIBIDO vestir(camisa,azul,passada,lisa)			
+	PROIBIDO vestir(camisa,vermelha,passada,listrada)	
+	*
+	PERMITIDO {camisa} {branca} 						{passada}	 {lisa}
+	PERMITIDO {camisa} {branca, vermelha, azul, lilás} 	{amarrotada} {horizontal,  vertical, rajada, listrada}
+	PERMITIDO {camisa} {branca, preta, vermelha, lilás} {amarrotada} {horizontal, vertical, rajada, listrada}
+	PERMITIDO {camisa} {branca, preta, azul, lilás} 	{amarrotada} {lisa,  horizontal, vertical, rajada}
+	CONFLITO (neste caso a camisa branca é válida, mas os outros pattern matching falham
+
+----CENÁRIO 11
+	PERMITIDO vestir(calça,branca,passada,lisa) 		
+	PROIBIDO vestir(calça,preta,passada,lisa)			
+	PROIBIDO vestir(calça,azul,passada,lisa)			
+	PROIBIDO vestir(calça,vermelha,passada,listrada)	
+	*
+	PERMITIDO {calça} {branca} 							{passada}	 {lisa}
+	PERMITIDO {calça} {branca, vermelha, azul, lilás} 	{amarrotada} {horizontal,  vertical, rajada, listrada}
+	PERMITIDO {calça} {branca, preta, vermelha, lilás} 	{amarrotada} {horizontal, vertical, rajada, listrada}
+	PERMITIDO {calça} {branca, preta, azul, lilás} 		{amarrotada} {lisa,  horizontal, vertical, rajada}
+	CONFLITO (neste caso a calça branca é válida, mas os outros pattern matching falham
+	
+----CENÁRIO 12
+PERMITIDO vestir(camisa,branca,passada,lisa) 		
+PROIBIDO vestir(camisa,preta,amarrotada,horizontal)			
+PROIBIDO vestir(camisa,azul,amarrotada,vertical)			
+PROIBIDO vestir(camisa,vermelha,amarrotada,listrada)	
+*
+PERMITIDO {camisa} {branca} 						{passada} {lisa}
+PERMITIDO {camisa} {branca, vermelha, azul, lilás} 	{passada} {lisa, vertical, rajada, listrada}
+PERMITIDO {camisa} {branca, preta, vermelha, lilás} {passada} {lisa, horizontal, rajada, listrada}
+PERMITIDO {camisa} {branca, preta, azul, lilás} 	{passada} {lisa,  horizontal, vertical, rajada}
+SEM CONFLITO
+	
+----CENÁRIO 12 - A
+PERMITIDO vestir(camisa,branca,passada,lisa) 		
+PROIBIDO vestir(camisa,preta,amarrotada,horizontal)			
+*
+PERMITIDO {camisa} {branca} 						{passada} {lisa}
+PERMITIDO {camisa} {branca, vermelha, azul, lilás} 	{passada} {lisa, vertical, rajada, listrada}
+SEM CONFLITO
+
+----CENÁRIO 12 - B
+PERMITIDO vestir(camisa,branca,passada,lisa) 		
+PROIBIDO vestir(camisa,azul,amarrotada,vertical)			
+*
+PERMITIDO {camisa} {branca} 						{passada} {lisa}
+PERMITIDO {camisa} {branca, preta, vermelha, lilás} {passada} {lisa, horizontal, rajada, listrada}
+SEM CONFLITO
+	
+----CENÁRIO 12 - C
+PERMITIDO vestir(camisa,branca,passada,lisa) 		
+PROIBIDO vestir(camisa,vermelha,amarrotada,listrada)	
+*
+PERMITIDO {camisa} {branca} 						{passada} {lisa}
+PERMITIDO {camisa} {branca, preta, azul, lilás} 	{passada} {lisa,  horizontal, vertical, rajada}
+SEM CONFLITO
+
+----CENÁRIO 13
+	PERMITIDO vestir(camisa,branca,passada,lisa) 		
+	PROIBIDO  vestir(camisa,preta,passada,lisa)			
+	PROIBIDO  vestir(camisa,azul,passada,lisa)			
+	PROIBIDO  vestir(camisa,vermelha,passada,listrada)
+	PERMITIDO vestir(calça,branca,passada,lisa) 		
+	PROIBIDO  vestir(calça,preta,passada,lisa)			
+	PROIBIDO  vestir(calça,azul,passada,lisa)			
+	PROIBIDO  vestir(calça,vermelha,passada,listrada)	
+	*
+	PERMITIDO {camisa} {branca} 						{passada}	 {lisa}
+	PERMITIDO {camisa} {branca, vermelha, azul, lilás} 	{amarrotada} {horizontal,  vertical, rajada, listrada}
+	PERMITIDO {camisa} {branca, preta, vermelha, lilás} {amarrotada} {horizontal, vertical, rajada, listrada}
+	PERMITIDO {camisa} {branca, preta, azul, lilás} 	{amarrotada} {lisa,  horizontal, vertical, rajada}
+	PERMITIDO {calça}  {branca} 						{passada}	 {lisa}
+	PERMITIDO {calça}  {branca, vermelha, azul, lilás} 	{amarrotada} {horizontal,  vertical, rajada, listrada}
+	PERMITIDO {calça}  {branca, preta, vermelha, lilás} {amarrotada} {horizontal, vertical, rajada, listrada}
+	PERMITIDO {calça}  {branca, preta, azul, lilás} 	{amarrotada} {lisa,  horizontal, vertical, rajada}
+	CONFLITO (a análise para calça e camisa é feita de forma separada)
+
+----CENÁRIO 14
+	PERMITIDO vestir(camisa,branca,passada,lisa) 		
+	PROIBIDO  vestir(camisa,preta,passada,lisa)			
+	PERMITIDO vestir(calça,branca,passada,lisa) 		
+	PROIBIDO  vestir(calça,preta,passada,lisa)			
+	PERMITIDO vestir(CONJUNTO_VESTIMENTA, A, vermelha, passada, listrada)
+	*
+	PERMITIDO {camisa} {branca} 						{passada}	 {lisa}
+	PERMITIDO {camisa} {branca, vermelha, azul, lilás} 	{amarrotada} {horizontal,  vertical, rajada, listrada}
+	PERMITIDO {calça}  {branca} 						{passada}	 {lisa}
+	PERMITIDO {calça}  {branca, vermelha, azul, lilás} 	{amarrotada} {horizontal,  vertical, rajada, listrada}
+	PERMITIDO vestir(CONJUNTO_VESTIMENTA, A, passada, listrada)
+	CONFLITO (consigo ter calça e camisa da mesma cor, mas passada e estampa falham)
+
+----CENÁRIO 15
+PERMITIDO vestir(camisa,branca,passada,lisa) 		
+PROIBIDO  vestir(camisa,preta,amarrotada,horizontal)			
+PERMITIDO vestir(calça,branca,passada,lisa) 		
+PROIBIDO  vestir(calça,preta,amarrotada,horizontal)
+PERMITIDO vestir(CONJUNTO_VESTIMENTA, A, passada, lisa)	
+*
+PERMITIDO {camisa} {branca} 						{passada} {lisa}
+PERMITIDO {camisa} {branca, vermelha, azul, lilás} 	{passada} {lisa, vertical, rajada, listrada}
+PERMITIDO {calça}  {branca} 						{passada} {lisa}
+PERMITIDO {calça}  {branca, vermelha, azul, lilás} 	{passada} {lisa, vertical, rajada, listrada}
+PERMITIDO vestir(CONJUNTO_VESTIMENTA, A, passada, lisa)
+SEM CONFLITO
+
+----CENÁRIO 15 - A
+PERMITIDO vestir(camisa,branca,passada,lisa) 		
+PERMITIDO vestir(calça,branca,passada,lisa) 		
+PERMITIDO vestir(CONJUNTO_VESTIMENTA, A, passada, lisa)	
+*
+PERMITIDO {camisa} {branca} {passada} {lisa}
+PERMITIDO {calça}  {branca} {passada} {lisa}
+PERMITIDO vestir(CONJUNTO_VESTIMENTA, A, passada, lisa)
+SEM CONFLITO
+
+----CENÁRIO 15 - B
+PROIBIDO  vestir(camisa,preta,amarrotada,horizontal)			
+PROIBIDO  vestir(calça,preta,amarrotada,horizontal)
+PERMITIDO vestir(CONJUNTO_VESTIMENTA, A, passada, lisa)	
+*
+PERMITIDO {camisa} {branca, vermelha, azul, lilás} 	{passada} {lisa, vertical, rajada, listrada}
+PERMITIDO {calça}  {branca, vermelha, azul, lilás} 	{passada} {lisa, vertical, rajada, listrada}
+PERMITIDO vestir(CONJUNTO_VESTIMENTA, A, passada, lisa)
+SEM CONFLITO (OS OUTROS PARÂMETROS TAMBÉM PRECISAM FAZER O CASAMENTO)
+
+----CENÁRIO 16
+	PERMITIDO vestir(camisa,branca,passada,lisa) 		
+	PROIBIDO  vestir(camisa,preta,amarrotada,horizontal)			
+	PERMITIDO vestir(calça,branca,passada,lisa) 		
+	PROIBIDO  vestir(calça,preta,amarrotada,horizontal)
+	PERMITIDO vestir(CONJUNTO_VESTIMENTA, !A, passada, lisa)	
+	*
+	PERMITIDO {camisa} {branca} 						{passada} {lisa}
+	PERMITIDO {camisa} {branca, vermelha, azul, lilás} 	{passada} {lisa, vertical, rajada, listrada}
+	PERMITIDO {calça}  {branca} 						{passada} {lisa}
+	PERMITIDO {calça}  {branca, vermelha, azul, lilás} 	{passada} {lisa, vertical, rajada, listrada}
+	PERMITIDO vestir(CONJUNTO_VESTIMENTA, !A, passada, lisa)
+	CONFLITO (só tenho calça e camisa branca, não pode ser diferente)
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+========================================================================================================================
+CASOS ONDE AS NORMAS ESTÃO TABULADAS ESTÃO EM CONFLITO
+========================================================================================================================
+OBRIGAÇÃO
+=>SUCONJUNTO A
+1
+	N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é obrigado a vestir camisa branca
+	N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é obrigado a vestir calça preta
+	N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é obrigado a vestir calça e camisa da mesma cor
+	
+	N1 = agente A PERMITIDO a vestir camisa branca
+	N2 = agente A PERMITIDO a vestir calça preta
+	N3 = agente A PERMITIDO a vestir calça e camisa da mesma cor(
+	N1: camisa {b} 
+	N2: calça  {p}
+	N3: camisa {b} e calça {b}
+	CONFLITO
+	======================>CHECKED
+---------------------------------------------------------------------------------------------
+=>SUCONJUNTO B
+100
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é obrigado a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é obrigado a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é obrigado a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa branca
+N2 = agente A é PERMITIDO a vestir calça branca
+N3 = agente A é PERMITIDO a vestir calça e camisa da mesma cor
+N1: camisa {b} 
+N2: calça  {b}
+N3: camisa {b} e calça {b}
+SEM CONFLITO
+======================>CHECKED
+---------------------------------------------------------------------------------------------
+=>SUCONJUNTO C
+2
+	N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é obrigado a vestir camisa branca
+	N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é obrigado a vestir calça branca
+	N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é obrigado a vestir calça e camisa de cores diferentes
+	
+	N1 = agente A é PERMITIDO a vestir camisa branca
+	N2 = agente A é PERMITIDO a vestir calça branca
+	N3 = agente A é PERMITIDO a vestir calça e camisa de cores diferentes
+	N1: camisa {b} 
+	N2: calça  {b}
+	N3: camisa {b} e calça {!b}
+	CONFLITO
+	======================>CHECKED
+========================================================================================================================
+========================================================================================================================
+PERMISSÃO (SEM NEHUM CONFLITO)
+=>SUCONJUNTO A
+101
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PERMITIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PERMITIDO a vestir calça preta
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PERMITIDO a vestir calça e camisa da mesma cor
+---------------------------------------------------------------------------------------------
+=>SUCONJUNTO B
+102
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PERMITIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PERMITIDO a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PERMITIDO a vestir calça e camisa da mesma cor
+---------------------------------------------------------------------------------------------
+=>SUCONJUNTO C
+103
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PERMITIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PERMITIDO a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PERMITIDO a vestir calça e camisa de cores diferentes
+========================================================================================================================
+========================================================================================================================
+PROIBIÇÃO (SEM NEHUM CONFLITO)
+=>SUCONJUNTO A
+104
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça preta
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa da mesma cor
+---------------------------------------------------------------------------------------------
+=>SUCONJUNTO B
+105
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa da mesma cor
+---------------------------------------------------------------------------------------------
+=>SUCONJUNTO C
+106
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa de cores diferentes
+========================================================================================================================
+========================================================================================================================
+PERMISSION X PROHIBITION
+=>SUCONJUNTO A
+COMBINAÇÕES: PER,PER,PRO; PER,PRO,PER; PER,PRO,PRO; PRO,PER,PER; PRO,PER,PRO; PRO,PRO,PER;
+107
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PERMITIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PERMITIDO a vestir calça preta
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa branca
+N2 = agente A é PERMITIDO a vestir calça preta
+N3 = agente A é PERMITIDO a vestir calça e camisa DE CORES DIFERENTES
+N1: camisa {b} 
+N2: calça  {p}
+N3: camisa {b} e calça {p}
+SEM CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+108
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PERMITIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça preta
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PERMITIDO a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa branca
+N2 = agente A é PERMITIDO a vestir calça NÃO preta
+N3 = agente A é PERMITIDO a vestir calça e camisa da mesma cor
+N1: camisa {b} 
+N2: calça  {b, a, v, l}
+N3: camisa {b} e calça {b}
+SEM CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+109
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PERMITIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça preta
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa branca
+N2 = agente A é PERMITIDO a vestir calça NÃO preta
+N3 = agente A é PERMITIDO a vestir calça e camisa de cores diferentes
+N1: camisa {b} 
+N2: calça  {b, a, v, l}
+N3: camisa {b} e calça {a}
+SEM CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+110
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PERMITIDO a vestir calça preta
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PERMITIDO a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa NÃO branca
+N2 = agente A é PERMITIDO a vestir calça preta
+N3 = agente A é PERMITIDO a vestir calça e camisa da mesma cor
+N1: camisa {p, a, v, l} 
+N2: calça  {p}
+N3: camisa {p} e calça {p}
+SEM CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+111
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PERMITIDO a vestir calça preta
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa NÃO branca
+N2 = agente A é PERMITIDO a vestir calça preta
+N3 = agente A é PERMITIDO a vestir calça e camisa DE CORES DIFERENTES
+N1: camisa {p, a, v, l} 
+N2: calça  {p}
+N3: camisa {a} e calça {p}
+SEM CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+112
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça preta
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PERMITIDO a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa NÃO branca
+N2 = agente A é PERMITIDO a vestir calça NÃO preta
+N3 = agente A é PERMITIDO a vestir calça e camisa da mesma cor
+N1: camisa {p, a, v, l} 
+N2: calça  {b, a, v, l}
+N3: camisa {a} e calça {a}
+SEM CONFLITO
+======================>CHECKED
+---------------------------------------------------------------------------------------------
+=>SUCONJUNTO B
+COMBINAÇÕES: PER,PER,PRO; PER,PRO,PER; PER,PRO,PRO; PRO,PER,PER; PRO,PER,PRO; PRO,PRO,PER; 
+3
+	N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PERMITIDO a vestir camisa branca
+	N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PERMITIDO a vestir calça branca
+	N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa da mesma cor
+	
+	N1 = agente A é PERMITIDO a vestir camisa branca
+	N2 = agente A é PERMITIDO a vestir calça branca
+	N3 = agente A é PERMITIDO a vestir calça e camisa de cores diferentes
+	N1: camisa {b} 
+	N2: calça  {b}
+	N3: camisa {b} e calça {!b}
+	CONFLITO
+	======================>CHECKED
+______________________________________________________________________________________________
+4	
+	N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PERMITIDO a vestir camisa branca
+	N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça branca
+	N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PERMITIDO a vestir calça e camisa da mesma cor
+	
+	N1 = agente A é PERMITIDO a vestir camisa branca
+	N2 = agente A é PERMITIDO a vestir calça NÃO branca
+	N3 = agente A é PERMITIDO a vestir calça e camisa da mesma cor
+	N1: camisa {b} 
+	N2: calça  {p, a, v, l}
+	N3: camisa {b} e calça {p}
+	CONFLITO
+		======================>CHECKED
+______________________________________________________________________________________________
+113
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PERMITIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa  branca
+N2 = agente A é PERMITIDO a vestir calça NÃO branca
+N3 = agente A é PERMITIDO a vestir calça e camisa DE CORES DIFERENTES
+N1: camisa {b} 
+N2: calça  {p, a, v, l}
+N3: camisa {b} e calça {p}
+SEM CONFLITO
+	======================>CHECKED
+______________________________________________________________________________________________
+5
+	N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+	N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PERMITIDO a vestir calça branca
+	N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PERMITIDO a vestir calça e camisa da mesma cor
+	
+	N1 = agente A é PERMITIDO a vestir camisa NÃO branca
+	N2 = agente A é PERMITIDO a vestir calça branca
+	N3 = agente A é PERMITIDO a vestir calça e camisa da mesma cor
+	N1: camisa {p, a, v, l} 
+	N2: calça  {b}
+	N3: camisa {p} e calça {b}
+	CONFLITO
+		======================>CHECKED
+______________________________________________________________________________________________
+114
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PERMITIDO a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa NÃO branca
+N2 = agente A é PERMITIDO a vestir calça branca
+N3 = agente A é PERMITIDO a vestir calça e camisa DE CORES DIFERENTES
+N1: camisa {p, a, v, l} 
+N2: calça  {b}
+N3: camisa {p} e calça {b}
+SEM CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+115
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PERMITIDO a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa NÃO branca
+N2 = agente A é PERMITIDO a vestir calça NÃO branca
+N3 = agente A é PERMITIDO a vestir calça e camisa da mesma cor
+N1: camisa {p, a, v, l} 
+N2: calça  {p, a, v, l}
+N3: camisa {p} e calça {p}
+SEM CONFLITO
+======================>CHECKED
+---------------------------------------------------------------------------------------------
+=>SUCONJUNTO C
+COMBINAÇÕES: PER,PER,PRO; PER,PRO,PER; PER,PRO,PRO; PRO,PER,PER; PRO,PER,PRO; PRO,PRO,PER;
+116
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PERMITIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PERMITIDO a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa de cores diferentes
+
+N1 = agente A é PERMITIDO a vestir camisa branca
+N2 = agente A é PERMITIDO a vestir calça branca
+N3 = agente A é PERMITIDO a vestir calça e camisa DA MESMA COR
+N1: camisa {b} 
+N2: calça  {b}
+N3: camisa {b} e calça {b}
+SEM CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+117
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PERMITIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PERMITIDO a vestir calça e camisa de cores diferentes
+
+N1 = agente A é PERMITIDO a vestir camisa branca
+N2 = agente A é PERMITIDO a vestir calça NÃO branca
+N3 = agente A é PERMITIDO a vestir calça e camisa de cores diferentes
+N1: camisa {b}
+N2: calça  {p, a, v, l}
+N3: camisa {b} e calça {p}
+SEM CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+6
+	N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PERMITIDO a vestir camisa branca
+	N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça branca
+	N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa de cores diferentes
+	
+	N1 = agente A é PERMITIDO a vestir camisa branca
+	N2 = agente A é PERMITIDO a vestir calça NÃO branca
+	N3 = agente A é PERMITIDO a vestir calça e camisa de cores iguais
+	N1: camisa {b} 
+	N2: calça  {p, a, v, l}
+	N3: camisa {b} e calça {p} 
+	CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+118
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PERMITIDO a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PERMITIDO a vestir calça e camisa de cores diferentes
+
+N1 = agente A é PERMITIDO a vestir camisa NÃO branca
+N2 = agente A é PERMITIDO a vestir calça branca
+N3 = agente A é PERMITIDO a vestir calça e camisa de cores diferentes
+N1: camisa {p, a, v, l} 
+N2: calça  {b}
+N3: camisa {p} e calça {b}
+SEM CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+7
+	N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+	N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PERMITIDO a vestir calça branca
+	N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa de cores diferentes
+	
+	N1 = agente A é PERMITIDO a vestir camisa NÃO branca
+	N2 = agente A é PERMITIDO a vestir calça branca
+	N3 = agente A é PERMITIDO a vestir calça e camisa de cores iguais
+	N1: camisa {p, a, v, l} 
+	N2: calça  {b}
+	N3: camisa {p} e calça {b}
+	CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+119
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PERMITIDO a vestir calça e camisa de cores diferentes
+
+N1 = agente A é PERMITIDO a vestir camisa NÃO branca
+N2 = agente A é PERMITIDO a vestir calça NÃO branca
+N3 = agente A é PERMITIDO a vestir calça e camisa de cores diferentes
+N1: camisa {p, a, v, l} 
+N2: calça  {p, a, v, l}
+N3: camisa {p, a, v, l} e calça {b, p, a, v, l}
+SEM CONFLITO
+======================>CHECKED
+========================================================================================================================
+========================================================================================================================
+OBLIGATION X PROHIBITION
+=>SUCONJUNTO A
+COMBINAÇÕES: OBL,OBL,PRO; OBL,PRO,OBL; OBL,PRO,PRO; PRO,OBL,OBL; PRO,OBL,PRO; PRO,PRO,OBL; 
+120
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é OBRIGADO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é OBRIGADO a vestir calça preta
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa branca
+N2 = agente A é PERMITIDO a vestir calça preta
+N3 = agente A é PERMITIDO a vestir calça e camisa DE CORES DIFERENTES
+N1: camisa {b} 
+N2: calça  {p}
+N3: camisa {b} e calça {p}
+SEM CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+121
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é OBRIGADO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça preta
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é OBRIGADO a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa branca
+N2 = agente A é PERMITIDO a vestir calça NÃO preta
+N3 = agente A é PERMITIDO a vestir calça e camisa da mesma cor
+N1: camisa {b} 
+N2: calça  {b, a, v, l}
+N3: camisa {b} e calça {b}
+SEM CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+122
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é OBRIGADO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça preta
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa branca
+N2 = agente A é PERMITIDO a vestir calça NÃO preta
+N3 = agente A é PERMITIDO a vestir calça e camisa de cores diferentes
+N1: camisa {b} 
+N2: calça  {b, a, v, l}
+N3: camisa {b} e calça {a}
+SEM CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+123
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é OBRIGADO a vestir calça preta
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é OBRIGADO a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa NÃO branca
+N2 = agente A é PERMITIDO a vestir calça preta
+N3 = agente A é PERMITIDO a vestir calça e camisa da mesma cor
+N1: camisa {p, a, v, l} 
+N2: calça  {p}
+N3: camisa {p} e calça {p}
+SEM CONFLITO
+______________________________________________________________________________________________
+124
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é OBRIGADO a vestir calça preta
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa NÃO branca
+N2 = agente A é PERMITIDO a vestir calça preta
+N3 = agente A é PERMITIDO a vestir calça e camisa de cores diferentes
+N1: camisa {p, a, v, l} 
+N2: calça  {p}
+N3: camisa {a} e calça {p}
+SEM CONFLITO
+______________________________________________________________________________________________
+125
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça preta
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é OBRIGADO a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa NÃO branca
+N2 = agente A é PERMITIDO a vestir calça NÃO preta
+N3 = agente A é PERMITIDO a vestir calça e camisa da mesma cor
+N1: camisa {p, a, v, l} 
+N2: calça  {b, a, v, l}
+N3: camisa {a} e calça {a}
+CONFLITO
+---------------------------------------------------------------------------------------------
+=>SUCONJUNTO B
+COMBINAÇÕES: OBL,OBL,PRO; OBL,PRO,OBL; OBL,PRO,PRO; PRO,OBL,OBL; PRO,OBL,PRO; PRO,PRO,OBL; 
+8
+	N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é OBRIGADO a vestir camisa branca
+	N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é OBRIGADO a vestir calça branca
+	N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa da mesma cor
+	
+	N1 = agente A é PERMITIDO a vestir camisa branca
+	N2 = agente A é PERMITIDO a vestir calça branca
+	N3 = agente A é PERMITIDO a vestir calça e camisa de cores diferentes
+	N1: camisa {b} 
+	N2: calça  {b}
+	N3: camisa {b} e calça {!b}
+	CONFLITO
+______________________________________________________________________________________________
+9
+	N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é OBRIGADO a vestir camisa branca
+	N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça branca
+	N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é OBRIGADO a vestir calça e camisa da mesma cor
+	
+	N1 = agente A é PERMITIDO a vestir camisa branca
+	N2 = agente A é PERMITIDO a vestir calça NÃO branca
+	N3 = agente A é PERMITIDO a vestir calça e camisa da mesma cor
+	N1: camisa {b} 
+	N2: calça  {p, a, v, l}
+	N3: camisa {b} e calça {p}
+	CONFLITO
+______________________________________________________________________________________________
+126
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é OBRIGADO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa branca
+N2 = agente A é PERMITIO a vestir calça NÃO branca
+N3 = agente A é PERMITIDO a vestir calça e camisa DE CORES DIFERENTES
+N1: camisa {b} 
+N2: calça  {p, a, v, l}
+N3: camisa {b} e calça {p}
+SEM CONFLITO
+______________________________________________________________________________________________
+10
+	N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+	N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é OBRIGADO a vestir calça branca
+	N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é OBRIGADO a vestir calça e camisa da mesma cor
+	
+	N1 = agente A é PERMITIDO a vestir camisa NÃO branca
+	N2 = agente A é PERMITIDO a vestir calça branca
+	N3 = agente A é PERMITIDO a vestir calça e camisa da mesma cor
+	N1: camisa {p, a, v, l} 
+	N2: calça  {b}
+	N3: camisa {p} e calça {b}
+	CONFLITO
+______________________________________________________________________________________________
+127
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é OBRIGADO a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa NÃO branca
+N2 = agente A é PERMITIDO a vestir calça branca
+N3 = agente A é PERMITIDO a vestir calça e camisa DE CORES DIFERENTES
+N1: camisa {p, a, v, l} 
+N2: calça  {b}
+N3: camisa {p} e calça {p}
+SEM CONFLITO
+______________________________________________________________________________________________
+128
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é OBRIGADO a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa NÃO branca
+N2 = agente A é PERMITIDO a vestir calça NÃO branca
+N3 = agente A é PERMITIDO a vestir calça e camisa da mesma cor
+N1: camisa {p, a, v, l} 
+N2: calça  {p, a, v, l}
+N3: camisa {p, a, v, l} e calça {p, a, v, l}
+SEM CONFLITO
+---------------------------------------------------------------------------------------------
+=>SUCONJUNTO C
+COMBINAÇÕES: OBL,OBL,PRO; OBL,PRO,OBL; OBL,PRO,PRO; PRO,OBL,OBL; PRO,OBL,PRO; PRO,PRO,OBL; 
+129
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é OBRIGADO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é OBRIGADO a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa de cores diferentes
+
+N1 = agente A é PERMITIDO a vestir camisa branca
+N2 = agente A é PERMITIDO a vestir calça branca
+N3 = agente A é PERMITIDO a vestir calça e camisa DA MESMA COR
+N1: camisa {b} 
+N2: calça  {b}
+N3: camisa {b} e calça {b}
+SEM CONFLITO
+______________________________________________________________________________________________
+130
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é OBRIGADO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é OBRIGADO a vestir calça e camisa de cores diferentes
+
+N1 = agente A é PERMITIDO a vestir camisa branca
+N2 = agente A é PERMITIDO a vestir calça NÃO branca
+N3 = agente A é PERMITIDO a vestir calça e camisa de cores diferentes
+N1: camisa {b} 
+N2: calça  {p, a, v, l}
+N3: camisa {b} e calça {p} 
+SEM CONFLITO
+______________________________________________________________________________________________
+11
+	N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é OBRIGADO a vestir camisa branca
+	N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça branca
+	N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa de cores diferentes
+	
+	N1 = agente A é PERMITIDO a vestir camisa branca
+	N2 = agente A é PERMITIDO a vestir calça NÃO branca
+	N3 = agente A é PERMITIDO a vestir calça e camisa de cores iguais
+	N1: camisa {b} 
+	N2: calça  {p, a, v, l}
+	N3: camisa {b} e calça {p}
+	CONFLITO
+______________________________________________________________________________________________
+131
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é OBRIGADO a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é OBRIGADO a vestir calça e camisa de cores diferentes
+
+N1 = agente A é PERMITIDO a vestir camisa NÃO branca
+N2 = agente A é PERMITIDO a vestir calça branca
+N3 = agente A é PERMITIDO a vestir calça e camisa de cores diferentes
+N1: camisa {p, a, v, l} 
+N2: calça  {b}
+N3: camisa {p} e calça {b}
+SEM CONFLITO
+______________________________________________________________________________________________
+12
+	N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+	N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é OBRIGADO a vestir calça branca
+	N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa de cores diferentes
+	
+	N1 = agente A é PERMITIDO a vestir camisa NÃO branca
+	N2 = agente A é PERMITIDO a vestir calça branca
+	N3 = agente A é PERMITIDO a vestir calça e camisa de cores iguais
+	N1: camisa {p, a, v, l} 
+	N2: calça  {b}
+	N3: camisa {p} e calça {b}
+	CONFLITO
+______________________________________________________________________________________________
+132
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é OBRIGADO a vestir calça e camisa de cores diferentes
+
+N1 = agente A é PERMITIDO a vestir camisa NÃO branca
+N2 = agente A é PERMITIDO a vestir calça NÃO branca
+N3 = agente A é PERMITIDO a vestir calça e camisa de cores diferentes
+N1: camisa {p, a, v, l} 
+N2: calça  {p, a, v, l}
+N3: camisa {p} e calça {a}
+SEM CONFLITO
+
+========================================================================================================================
+========================================================================================================================
+PERMITIDO X PROIBIDO X OBRIGADO
+=>SUCONJUNTO A
+Combinações: PER,PRO,OBL; PER,OBL,PRO; PRO,PER,OBL; PRO,OBL,PER; OBL,PER,PRO; OBL,PRO,PER;
+133
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PERMITIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça preta
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é OBRIGADO a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa branca
+N2 = agente A é PERMITIDO a vestir calça NÃO preta
+N3 = agente A é PERMITIDO a vestir calça e camisa da mesma cor
+N1: camisa {b} 
+N2: calça  {b, a, v, l}
+N3: camisa {b} e calça {b} 
+SEM CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+134
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PERMITIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é OBRIGADO a vestir calça preta
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa branca
+N2 = agente A é PERMITIDO a vestir calça preta
+N3 = agente A é PERMITIDO a vestir calça e camisa DE CORES DIFERENTES
+N1: camisa {b} 
+N2: calça  {p}
+N3: camisa {b} e calça {p}
+SEM CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+135
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PERMITIDO a vestir calça preta
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é OBRIGADO a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa NÃO branca
+N2 = agente A é PERMITIDO a vestir calça preta
+N3 = agente A é PERMITIDO a vestir calça e camisa da mesma cor
+N1: camisa {p, a, v, l} 
+N2: calça  {p}
+N3: camisa {p} e calça {p}
+SEM CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+136
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é OBRIGADO a vestir calça preta
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PERMITIDO a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa NÃO branca
+N2 = agente A é PERMITIDO a vestir calça preta
+N3 = agente A é PERMITIDO a vestir calça e camisa da mesma cor
+N1: camisa {p, a, v, l} 
+N2: calça  {p}
+N3: camisa {p} e calça {p} 
+SEM CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+137
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é OBRIGADO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PERMITIDO a vestir calça preta
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa branca
+N2 = agente A é PERMITIDO a vestir calça preta
+N3 = agente A é PERMITIDO a vestir calça e camisa DE CORES DIFERENTES
+N1: camisa {b} 
+N2: calça  {p}
+N3: camisa {b} e calça {p}
+SEM CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+138
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é OBRIGADO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça preta
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PERMITIDO a vestir calça e camisa da mesma cor
+
+N1 = agente A é PERMITIDO a vestir camisa branca
+N2 = agente A é PERMITIDO a vestir calça NÃO preta
+N3 = agente A é PERMITIDO a vestir calça e camisa da mesma cor
+N1: camisa {b} 
+N2: calça  {b, a, v, l}
+N3: camisa {b} e calça {b}
+SEM CONFLITO
+======================>CHECKED
+---------------------------------------------------------------------------------------------
+=>SUCONJUNTO B
+Combinações: PER,PRO,OBL; PER,OBL,PRO; PRO,PER,OBL; PRO,OBL,PER; OBL,PER,PRO; OBL,PRO,PER;
+13
+	N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PERMITIDO a vestir camisa branca
+	N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça branca
+	N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é OBRIGADO a vestir calça e camisa da mesma cor
+	
+	N1 = agente A é PERMITIDO a vestir camisa branca
+	N2 = agente A é PERMITIDO a vestir calça NÃO branca
+	N3 = agente A é PERMITIDO a vestir calça e camisa da mesma cor
+	N1: camisa {b} 
+	N2: calça  {p, a, v, l}
+	N3: camisa {b} e calça {p, a, v, l}
+	CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+14
+	N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PERMITIDO a vestir camisa branca
+	N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é OBRIGADO a vestir calça branca
+	N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa da mesma cor
+	
+	N1 = agente A é PERMITIDO a vestir camisa branca
+	N2 = agente A é PERMITIDO a vestir calça branca
+	N3 = agente A é PERMITIDO a vestir calça e camisa de cores diferentes
+	N1: camisa {b} 
+	N2: calça  {b}
+	N3: camisa {b} e calça {!b}
+	CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+15
+	N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+	N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PERMITIDO a vestir calça branca
+	N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é OBRIGADO a vestir calça e camisa da mesma cor
+	
+	N1 = agente A é PERMITIDO a vestir camisa NÃO branca
+	N2 = agente A é PERMITIDO a vestir calça branca
+	N3 = agente A é PERMITIDO a vestir calça e camisa da mesma cor
+	N1: camisa {p, a, v, l} 
+	N2: calça  {b}
+	N3: camisa {p, a, v, l} e calça {b}
+	CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+16
+	N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+	N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é OBRIGADO a vestir calça branca
+	N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PERMITIDO a vestir calça e camisa da mesma cor
+
+	N1 = agente A é PERMITIDO a vestir camisa NÃO branca
+	N2 = agente A é PERMITIDO a vestir calça branca
+	N3 = agente A é PERMITIDO a vestir calça e camisa da mesma cor
+	N1: camisa {p, a, v, l} 
+	N2: calça  {b}
+	N3: camisa {p, a, v, l} e calça {b}
+	CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+17
+	N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é OBRIGADO a vestir camisa branca
+	N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PERMITIDO a vestir calça branca
+	N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa da mesma cor
+	
+	N1 = agente A é PERMITIDO a vestir camisa branca
+	N2 = agente A é PERMITIDO a vestir calça branca
+	N3 = agente A é PERMITIDO a vestir calça e camisa de cores diferentes
+	N1: camisa {b} 
+	N2: calça  {b}
+	N3: camisa {b} e calça {!b}
+	CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+18
+	N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é OBRIGADO a vestir camisa branca
+	N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça branca
+	N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PERMITIDO a vestir calça e camisa da mesma cor
+
+	N1 = agente A é PERMITIDO a vestir camisa branca
+	N2 = agente A é PERMITIDO a vestir calça NÃO branca
+	N3 = agente A é PERMITIDO a vestir calça e camisa da mesma cor
+	N1: camisa {b} 
+	N2: calça  {p, a, v, l}
+	N3: camisa {b} e calça {p, a, v, l}
+	CONFLITO
+======================>CHECKED
+---------------------------------------------------------------------------------------------
+=>SUCONJUNTO C
+Combinações: PER,PRO,OBL; PER,OBL,PRO; PRO,PER,OBL; PRO,OBL,PER; OBL,PER,PRO; OBL,PRO,PER;
+139
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PERMITIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é OBRIGADO a vestir calça e camisa de cores diferentes
+
+N1 = agente A é PERMITIDO a vestir camisa branca
+N2 = agente A é PERMITIDO a vestir calça NÃO branca
+N3 = agente A é PERMITIDO a vestir calça e camisa de cores diferentes
+N1: camisa {b} 
+N2: calça  {p, a, v, l}
+N3: camisa {b} e calça {p, a, v, l}
+SEM CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+140
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PERMITIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é OBRIGADO a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa de cores diferentes
+
+N1 = agente A é PERMITIDO a vestir camisa branca
+N2 = agente A é PERMITIDO a vestir calça branca
+N3 = agente A é PERMITIDO a vestir calça e camisa DA MESMA COR
+N1: camisa {b} 
+N2: calça  {b}
+N3: camisa {b} e calça {b}
+SEM CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+141
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PERMITIDO a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é OBRIGADO a vestir calça e camisa de cores diferentes
+
+N1 = agente A é PERMITIDO a vestir camisa NÃO branca
+N2 = agente A é PERMITIDO a vestir calça branca
+N3 = agente A é PERMITIDO a vestir calça e camisa de cores diferentes
+N1: camisa {p, a, v, l} 
+N2: calça  {b}
+N3: camisa {p, a, v, l} e calça {b}
+SEM CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+142
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é PROIBIDO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é OBRIGADO a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PERMITIDO a vestir calça e camisa de cores diferentes
+
+N1 = agente A é PERMITIDO a vestir camisa NÃO branca
+N2 = agente A é PERMITIDO a vestir calça branca
+N3 = agente A é PERMITIDO a vestir calça e camisa de cores diferentes
+N1: camisa {p, a, v, l} 
+N2: calça  {b}
+N3: camisa {p, a, v, l} e calça {b}
+SEM CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+143
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é OBRIGADO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PERMITIDO a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PROIBIDO a vestir calça e camisa de cores diferentes
+
+N1 = agente A é PERMITIDO a vestir camisa branca
+N2 = agente A é PERMITIDO a vestir calça branca
+N3 = agente A é PERMITIDO a vestir calça e camisa DA MESMA COR
+N1: camisa {b} 
+N2: calça  {b}
+N3: camisa {b} e calça {b}
+SEM CONFLITO
+======================>CHECKED
+______________________________________________________________________________________________
+144
+N1 = {O,casa, pessoa, vestir,ac, dc, none} 	--agente A é OBRIGADO a vestir camisa branca
+N2 = {O,casa, pessoa, vestir,ac, dc, none}	--agente A é PROIBIDO a vestir calça branca
+N3 = {O,casa, pessoa,vestir,ac,dc,none}		--agente A é PERMITIDO a vestir calça e camisa de cores diferentes
+
+N1 = agente A é PERMITIDO a vestir camisa branca
+N2 = agente A é PERMITIDO a vestir calça NÃO branca
+N3 = agente A é PERMITIDO a vestir calça e camisa de cores diferentes
+N1: camisa {b} 
+N2: calça  {p, a, v, l}
+N3: camisa {b} e calça {p, a, v, l}
+SEM CONFLITO
+======================>CHECKED
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------

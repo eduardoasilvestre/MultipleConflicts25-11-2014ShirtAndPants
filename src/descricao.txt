@@ -1,0 +1,11 @@
+25/11/2014
+O código de background das versões anteriores será modificado para atender as novas necessidades.
+Nessa versão o algoritmo considera:
+NÚMERO DE VARIÁVEIS: n = 4(vestimenta, cores, passada, estampa) - mas funciona para N
+INTERVALO PARA AS VARIÁVEIS: limitado
+vestimenta{calça, camisa} , cores {branca, preta, azul, vermelho, lilás}, passada{passada, amarrotada}, estampa{horizontal, vertical, lisa, rajada}
+NÚMERO DE AÇÕES: 1 (vestir)
+NÚMERO DE NORMAS: n
+
+-modificado a implementação  do actionChecker e do entityChecker
+-norma implementado serializable para fazer um deepclone
